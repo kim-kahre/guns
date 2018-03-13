@@ -1,0 +1,5 @@
+depend: [brawlEssentials]
+name: brawlGuns
+main: brawl.snaxv2.guns.main
+version: 0.1
+author: snaxv2
