@@ -14,7 +14,6 @@ public class scopeStuff {
 			metaData meta = new metaData();
 			if ((int)meta.getMetadata(player, "scoped") == 1) {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].scopeLevel));
-				
 			}
 		}	
 	}

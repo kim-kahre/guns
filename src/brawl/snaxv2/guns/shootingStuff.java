@@ -12,7 +12,9 @@ public class shootingStuff {
 	public void shoot(Player player) {
 		metaData meta = new metaData();
 		ammoStuff ammo = new ammoStuff();
+		//check if can shoot: holding a gun, the gun has reloaded, it can shoot, it has bullets, the equipment delay isnt active etc.
 		if ((int)meta.getMetadata(player, "delay") < 0 && player.getItemInHand() != null && (int)meta.getMetadata(player, player.getItemInHand().getTypeId()+ "inclip")>0 && (int)meta.getMetadata(player, player.getItemInHand().getTypeId() + "timer") <= 0 && ammo.itemAmount(player, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].ammoType)>0) {
+			//iterate as many times as the gun should shoot, and do the shooting xD
 			for (int i = 0; i<brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].bullets; i++) {
 				Snowball bullet = player.getWorld().spawn(player.getEyeLocation(), Snowball.class);
 				bullet.setShooter(player);
@@ -31,6 +33,7 @@ public class shootingStuff {
 				Vector temp = bullet.getVelocity().multiply(-brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].recoil);
 				player.setVelocity(new Vector(temp.getX(), temp.getY()+player.getVelocity().getY(), temp.getZ()));
 			}
+			//remove ammo from inv, update timers, ammo in the guns clip and play the soudns
 			int inclip = (int)meta.getMetadata(player, String.valueOf(player.getItemInHand().getTypeId())+"inclip");
 			ammo.consumeItem(player, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].ammoType);
 			if (inclip == 1) {

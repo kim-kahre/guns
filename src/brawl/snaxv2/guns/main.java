@@ -138,6 +138,9 @@ public class main extends JavaPlugin implements Listener {
             					ent.setVelocity(ent.getVelocity().add(new Vector(0,0.027,0)));
             				}
             			}
+            			
+            			
+            			//deal damage from guns as it is not done in the entitydamageevents as it would  cause problems xD
             			metaData met = new metaData();
             			if (ent.hasMetadata("damagedue") && (double)met.getMetadata(ent, "damagedue") > 0) {
             				if (ent instanceof Damageable) {
@@ -153,10 +156,8 @@ public class main extends JavaPlugin implements Listener {
             					}else {
             						((Damageable) ent).setHealth(((Damageable) ent).getHealth()-damage);
             						met.setMetadata(ent, "damagedue", 0D);
-            					    for (Player player : Bukkit.getOnlinePlayers()) {
-
-            					    	
-            					    	
+            						//do the damage animations cuz they are cancelled when the entitydamageevent is cancelled
+            					    for (Player player : Bukkit.getOnlinePlayers()) {        					    	
             					        PacketPlayOutAnimation packet = new PacketPlayOutAnimation();
 
             					        try {
@@ -214,6 +215,7 @@ public class main extends JavaPlugin implements Listener {
 	public void playerJoinEvent (PlayerJoinEvent e){
 		Player player = e.getPlayer();
 		metaData meta = new metaData();
+		//set the necessary metadatas for scoping, damage tracking, equipping delays etc.
 		meta.setMetadata(player, "scoped", 0);
 		meta.setMetadata(player, "lastclick", 0);
 		meta.setMetadata(player, "holding", 0);
@@ -234,16 +236,18 @@ public class main extends JavaPlugin implements Listener {
 		canbeDamaged can = new canbeDamaged();
 		if (!(event.getEntity() instanceof Player) || (event.getEntity() instanceof Player && can.getState(event.getEntity()) == true)) {
 			if (event.getDamager() instanceof Snowball) {
+				//cancel so there is no damage timer shit etc and do the damage animations etc in the bukkitrunnable @onenable
 				event.setCancelled(true);
 				meta.setMetadata(event.getEntity(), "lastDamager", ((Player)((Snowball)event.getDamager()).getShooter()).getName());
 				double damage = (double) meta.getMetadata(event.getDamager(), "damage");
 				if (event.getDamager().getLocation().getY()-1.45>event.getEntity().getLocation().getY()) {
 					damage = damage*2;
 				}
-				double Skb = (double) meta.getMetadata(event.getDamager(), "kb");
+				//calculate knockback cuz its a complex artform jk jk
+				double knockBackAmplifier = (double) meta.getMetadata(event.getDamager(), "kb");
 				Vector kb = new Vector(event.getDamager().getVelocity().getX(), 0, event.getDamager().getVelocity().getZ()).normalize();
 				kb = new Vector (kb.getX(), 1.2, kb.getZ());
-				event.getEntity().setVelocity(kb.multiply(Skb));
+				event.getEntity().setVelocity(kb.multiply(knockBackAmplifier));
 				if (event.getEntity().hasMetadata("damagedue")) {
 					meta.setMetadata(event.getEntity(), "damagedue", damage+(double)meta.getMetadata(event.getEntity(), "damagedue"));
 				}else {
@@ -255,6 +259,7 @@ public class main extends JavaPlugin implements Listener {
 	 
     @EventHandler
     public void onItemDrop (PlayerDropItemEvent e) {
+    	//make sure players dont drop guns that arent reloaded and reload if they arent :P
         Player p = e.getPlayer();
         Item drop = e.getItemDrop();
         metaData meta = new metaData();
@@ -272,7 +277,7 @@ public class main extends JavaPlugin implements Listener {
 	public void playerInteractEvent (PlayerInteractEvent e){
 		Player player = e.getPlayer();
 		
-		//scoping
+		//scoping stuff
 		if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 			int id = e.getPlayer().getItemInHand().getTypeId();
 			if (guns[id].is) {
@@ -287,14 +292,6 @@ public class main extends JavaPlugin implements Listener {
 		
 		//right click (register the clicks here and handle the shooting in the runnable)
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getTypeId() == 1 && false == true) {
-				e.getPlayer().setVelocity(new Vector(e.getPlayer().getVelocity().getX(), 0.6, e.getPlayer().getVelocity().getZ()).add(e.getPlayer().getLocation().getDirection().multiply(0.5)));
-				e.getPlayer().setFallDistance(0);
-				ItemMeta meta = e.getPlayer().getItemInHand().getItemMeta();
-				meta.setDisplayName("Jetpack");
-				e.getPlayer().getItemInHand().setItemMeta(meta);
-				return;
-			}
 			if (e.getPlayer().getItemInHand() != null && guns[e.getPlayer().getItemInHand().getTypeId()].is) {
 				metaData meta = new metaData();
 				shootingStuff fire = new shootingStuff();
