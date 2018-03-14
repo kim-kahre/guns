@@ -12,7 +12,7 @@ public class shootingStuff {
 	public void shoot(Player player) {
 		metaData meta = new metaData();
 		ammoStuff ammo = new ammoStuff();
-		if (player.getItemInHand() != null && (int)meta.getMetadata(player, player.getItemInHand().getTypeId()+ "inclip")>0 && (int)meta.getMetadata(player, player.getItemInHand().getTypeId() + "timer") <= 0 && ammo.itemAmount(player, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].ammoType)>0) {
+		if ((int)meta.getMetadata(player, "delay") < 0 && player.getItemInHand() != null && (int)meta.getMetadata(player, player.getItemInHand().getTypeId()+ "inclip")>0 && (int)meta.getMetadata(player, player.getItemInHand().getTypeId() + "timer") <= 0 && ammo.itemAmount(player, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].ammoType)>0) {
 			for (int i = 0; i<brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].bullets; i++) {
 				Snowball bullet = player.getWorld().spawn(player.getEyeLocation(), Snowball.class);
 				bullet.setShooter(player);

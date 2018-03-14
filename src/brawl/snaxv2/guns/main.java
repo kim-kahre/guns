@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -114,6 +115,15 @@ public class main extends JavaPlugin implements Listener {
             			}
             		}
             	}
+            	//check item in hand and apply delay
+            	for (Player p : Bukkit.getOnlinePlayers()) {
+            		metaData met = new metaData();
+            		if (guns[(int)met.getMetadata(p, "handItemId")].is && (int)met.getMetadata(p, "handItemId")!=p.getItemInHand().getTypeId() && guns[(int)met.getMetadata(p, "handItemId")].tickModif1 > 3) {
+            			met.setMetadata(p, "delay", 6);
+            		}
+            		met.setMetadata(p, "handItemId", p.getItemInHand().getTypeId());
+            		met.setMetadata(p, "delay", (int)met.getMetadata(p,"delay") -1);
+            	}
             	
             	//damage entities accordingly and neglect snowball gravity
             	for (World world : Bukkit.getWorlds()) {
@@ -205,10 +215,11 @@ public class main extends JavaPlugin implements Listener {
 		Player player = e.getPlayer();
 		metaData meta = new metaData();
 		meta.setMetadata(player, "scoped", 0);
-		
 		meta.setMetadata(player, "lastclick", 0);
 		meta.setMetadata(player, "holding", 0);
-		
+		meta.setMetadata(player, "lastDamager", player.getName());
+		meta.setMetadata(player, "delay", 0);
+		meta.setMetadata(player, "handItemId", player.getItemInHand().getTypeId());
 		//add the metadatas for each gun to the player
 		for (int i = 0; i<512; i++) {
 			meta.setMetadata(player, String.valueOf(i)+"timer", 0);
@@ -224,6 +235,7 @@ public class main extends JavaPlugin implements Listener {
 		if (!(event.getEntity() instanceof Player) || (event.getEntity() instanceof Player && can.getState(event.getEntity()) == true)) {
 			if (event.getDamager() instanceof Snowball) {
 				event.setCancelled(true);
+				meta.setMetadata(event.getEntity(), "lastDamager", ((Player)((Snowball)event.getDamager()).getShooter()).getName());
 				double damage = (double) meta.getMetadata(event.getDamager(), "damage");
 				if (event.getDamager().getLocation().getY()-1.45>event.getEntity().getLocation().getY()) {
 					damage = damage*2;
