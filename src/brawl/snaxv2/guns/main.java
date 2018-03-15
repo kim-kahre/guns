@@ -131,7 +131,7 @@ public class main extends JavaPlugin implements Listener {
             			}
             			
             			
-            			//the de
+            			//the delay stuff
 		            	for (Player p : Bukkit.getOnlinePlayers()) {
 			           		metaData met = new metaData();
 				           	met.setMetadata(p, "delay", (int)met.getMetadata(p,"delay") -1);
