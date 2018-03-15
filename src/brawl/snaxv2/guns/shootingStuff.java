@@ -15,6 +15,14 @@ public class shootingStuff {
 		//check if can shoot: holding a gun, the gun has reloaded, it can shoot, it has bullets, the equipment delay isnt active etc.
 		if ((int)meta.getMetadata(player, "delay") < 0 && player.getItemInHand() != null && (int)meta.getMetadata(player, player.getItemInHand().getTypeId()+ "inclip")>0 && (int)meta.getMetadata(player, player.getItemInHand().getTypeId() + "timer") <= 0 && ammo.itemAmount(player, brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].ammoType)>0) {
 			//iterate as many times as the gun should shoot, and do the shooting xD
+        	
+			//check item in hand has changed and apply delay if so
+    		if (brawl.snaxv2.guns.main.guns[(int)meta.getMetadata(player, "handItemId")].is && (int)meta.getMetadata(player, "handItemId")!=player.getItemInHand().getTypeId() && brawl.snaxv2.guns.main.guns[(int)meta.getMetadata(player, "handItemId")].tickModif1 > 3) {
+    			meta.setMetadata(player, "delay", 6);
+    		}
+    		meta.setMetadata(player, "handItemId", player.getItemInHand().getTypeId());
+    		meta.setMetadata(player, "delay", (int)meta.getMetadata(player,"delay") -1);
+    		
 			for (int i = 0; i<brawl.snaxv2.guns.main.guns[player.getItemInHand().getTypeId()].bullets; i++) {
 				Snowball bullet = player.getWorld().spawn(player.getEyeLocation(), Snowball.class);
 				bullet.setShooter(player);

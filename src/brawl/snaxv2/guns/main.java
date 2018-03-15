@@ -115,15 +115,6 @@ public class main extends JavaPlugin implements Listener {
             			}
             		}
             	}
-            	//check item in hand and apply delay
-            	for (Player p : Bukkit.getOnlinePlayers()) {
-            		metaData met = new metaData();
-            		if (guns[(int)met.getMetadata(p, "handItemId")].is && (int)met.getMetadata(p, "handItemId")!=p.getItemInHand().getTypeId() && guns[(int)met.getMetadata(p, "handItemId")].tickModif1 > 3) {
-            			met.setMetadata(p, "delay", 6);
-            		}
-            		met.setMetadata(p, "handItemId", p.getItemInHand().getTypeId());
-            		met.setMetadata(p, "delay", (int)met.getMetadata(p,"delay") -1);
-            	}
             	
             	//damage entities accordingly and neglect snowball gravity
             	for (World world : Bukkit.getWorlds()) {
