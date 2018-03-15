@@ -131,6 +131,12 @@ public class main extends JavaPlugin implements Listener {
             			}
             			
             			
+            			//the de
+		            	for (Player p : Bukkit.getOnlinePlayers()) {
+			           		metaData met = new metaData();
+				           	met.setMetadata(p, "delay", (int)met.getMetadata(p,"delay") -1);
+				        }
+		            	
             			//deal damage from guns as it is not done in the entitydamageevents as it would  cause problems xD
             			metaData met = new metaData();
             			if (ent.hasMetadata("damagedue") && (double)met.getMetadata(ent, "damagedue") > 0) {
